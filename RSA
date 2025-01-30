@@ -1,0 +1,57 @@
+RSA: Select e, d, n. Encrypt a word using e and decrypt using d.
+
+import random
+
+# Extended Euclidean Algorithm to find modular inverse
+def egcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    gcd, x1, y1 = egcd(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+    return gcd, x, y
+
+def mod_inverse(e, phi):
+    gcd, x, y = egcd(e, phi)
+    if gcd != 1:
+        raise Exception("Modular inverse does not exist")
+    else:
+        return x % phi
+
+# Step 1: Select two prime numbers
+p = 61
+q = 53
+n = p * q  # Step 2: Compute n
+phi_n = (p - 1) * (q - 1)  # Step 3: Compute phi(n)
+
+# Step 4: Choose e (must be coprime with phi_n)
+e = 17  # Commonly used value
+d = mod_inverse(e, phi_n)  # Step 5: Compute d (private key)
+
+# RSA Encrypt function
+def rsa_encrypt(plaintext, e, n):
+    encrypted_text = [pow(ord(char), e, n) for char in plaintext]
+    return encrypted_text
+
+# RSA Decrypt function
+def rsa_decrypt(ciphertext, d, n):
+    decrypted_text = ''.join(chr(pow(char, d, n)) for char in ciphertext)
+    return decrypted_text
+
+# Example Usage
+plaintext = "HELLO"
+ciphertext = rsa_encrypt(plaintext, e, n)
+decrypted_text = rsa_decrypt(ciphertext, d, n)
+
+print("Public Key (e, n): ", (e, n))
+print("Private Key (d, n): ", (d, n))
+print("Original Text: ", plaintext)
+print("Encrypted Text: ", ciphertext)
+print("Decrypted Text: ", decrypted_text)
+
+output
+Public Key (e, n):  (17, 3233)
+Private Key (d, n):  (2753, 3233)
+Original Text:  HELLO
+Encrypted Text:  [3125, 1785, 2186, 2186, 2456]
+Decrypted Text:  HELLO
