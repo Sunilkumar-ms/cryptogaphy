@@ -1,0 +1,64 @@
+El-Gamal: Select e1, e2, r, d.
+                                         Compute c1, c2.
+                                         Decrypt using d. 
+
+import random
+
+# Extended Euclidean Algorithm to find modular inverse
+def egcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    gcd, x1, y1 = egcd(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+    return gcd, x, y
+
+def mod_inverse(a, p):
+    gcd, x, y = egcd(a, p)
+    if gcd != 1:
+        raise Exception("Modular inverse does not exist")
+    else:
+        return x % p
+
+# Step 1: Choose a large prime number (p)
+p = 23  # A small prime for simplicity
+
+# Step 2: Choose a primitive root (e1)
+e1 = 5  # Primitive root of 23
+
+# Step 3: Choose a private key (d)
+d = 7  # 1 < d < p-1
+
+# Step 4: Compute public key e2
+e2 = pow(e1, d, p)
+
+# Step 5: Choose a random integer (r)
+r = 3  # 1 < r < p-1
+
+# Message (as an integer)
+M = 10  # Example message
+
+# Step 6: Compute c1 and c2
+c1 = pow(e1, r, p)
+c2 = (M * pow(e2, r, p)) % p
+
+# Decryption
+s = pow(c1, d, p)  # Compute shared secret
+s_inv = mod_inverse(s, p)  # Compute modular inverse of s
+M_decrypted = (c2 * s_inv) % p  # Recover original message
+
+# Print results
+print("Public Key (e1, e2, p): ", (e1, e2, p))
+print("Private Key (d): ", d)
+print("Random r: ", r)
+print("Original Message (M): ", M)
+print("Ciphertext (c1, c2): ", (c1, c2))
+print("Decrypted Message: ", M_decrypted)
+
+output
+Public Key (e1, e2, p):  (5, 17, 23)
+Private Key (d):  7
+Random r:  3
+Original Message (M):  10
+Ciphertext (c1, c2):  (10, 20)
+Decrypted Message:  10
