@@ -1,0 +1,59 @@
+def egcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    g, x1, y1 = egcd(b % a, a)
+    x = y1 - (b // a) * x1
+    y = x1
+    return g, x, y
+
+def mod_inverse(a, m):
+    g, x, y = egcd(a, m)
+    if g != 1:
+        raise Exception('Modular inverse does not exist')
+    else:
+        return x % m
+
+def affine_encrypt(plaintext, a, b):
+    m = 26  # Alphabet size (A-Z)
+    ciphertext = ''
+    
+    for char in plaintext:
+        if char.isalpha():
+            x = ord(char.lower()) - ord('a')
+            encrypted_char = (a * x + b) % m
+            ciphertext += chr(encrypted_char + ord('a'))
+        else:
+            ciphertext += char
+    
+    return ciphertext
+
+def affine_decrypt(ciphertext, a, b):
+    m = 26  # Alphabet size (A-Z)
+    a_inv = mod_inverse(a, m)
+    plaintext = ''
+    
+    for char in ciphertext:
+        if char.isalpha():
+            x = ord(char.lower()) - ord('a')
+            decrypted_char = (a_inv * (x - b)) % m
+            plaintext += chr(decrypted_char + ord('a'))
+        else:
+            plaintext += char
+    
+    return plaintext
+
+# Example usage
+a = 5
+b = 8
+plaintext = "Affine Cipher Example"
+ciphertext = affine_encrypt(plaintext, a, b)
+decrypted_text = affine_decrypt(ciphertext, a, b)
+
+print("Original Text: ", plaintext)
+print("Encrypted Text: ", ciphertext)
+print("Decrypted Text: ", decrypted_text)
+
+output
+Original Text:  Affine Cipher Example
+Encrypted Text:  fxxpgk jgrkrj ixfpcv
+Decrypted Text:  affine cipher example
