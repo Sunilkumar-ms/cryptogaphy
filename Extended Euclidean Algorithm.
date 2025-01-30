@@ -1,0 +1,20 @@
+def extended_gcd(a, b):
+    if a == 0:
+        return b, 0, 1
+    else:
+        gcd, x1, y1 = extended_gcd(b % a, a)
+        x = y1 - (b // a) * x1
+        y = x1
+        return gcd, x, y
+
+# Example usage
+a = 30
+b = 20
+gcd, x, y = extended_gcd(a, b)
+
+print(f"GCD of {a} and {b} is: {gcd}")
+print(f"Coefficients x and y: {x}, {y}")
+
+output
+GCD of 30 and 20 is: 10
+Coefficients x and y: 1, -1
